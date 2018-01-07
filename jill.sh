@@ -17,14 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-JULIA_DOWNLOAD=${JULIA_DOWNLOAD:-"$HOME/packages/julias"}
-JULIA_INSTALL=${JULIA_INSTALL:-"/usr/local/bin"}
-
-function header() {
-  echo "Jill - Julia Installer 4 Linux - Light"
-  echo "Copyright (C) 2017 Abel Soares Siqueira <abel.s.siqueira@gmail.com>"
-  echo "Distributed under terms of the GPLv3 license."
-}
+JULIA_DOWNLOAD=${JULIA_DOWNLOAD:-"$HOME/opt/julia"}
+JULIA_INSTALL=${JULIA_INSTALL:-"/usr/bin"}
 
 function badfolder() {
   echo "The folder '$JULIA_INSTALL' is not on your PATH, you can"
@@ -33,14 +27,12 @@ function badfolder() {
 }
 
 function hi() {
-  header
   if [[ ! ":$PATH:" == *":$JULIA_INSTALL:"* ]]; then
     badfolder
     exit 1
   fi
   echo "This script will:"
   echo ""
-  # TODO: Expand to install older Julia?
   echo "  - Download latest stable Julia"
   echo "  - Create a link for julia"
   echo "  - Create a link for julia-VER"
@@ -68,8 +60,9 @@ function confirm() {
 function download_and_install() {
   mkdir -p $JULIA_DOWNLOAD
   cd $JULIA_DOWNLOAD
-  wget https://julialang.org/downloads/ -O page.html
-  url=$(grep "https.*linux/x64.*gz" page.html -m 1 -o)
+  wget https://julialang.org/downloads/ -O jldownloadpage.tmp.html
+  url=$(grep "https.*linux/x64.*gz" jldownloadpage.tmp.html -m 1 -o)
+  rm jldownloadpage.tmp.html
   [[ $url =~ julia-(.*)-linux ]] && version=${BASH_REMATCH[1]}
   major=${version:0:3}
   wget -c $url -O julia-$version.tar.gz
@@ -91,3 +84,4 @@ function download_and_install() {
 hi
 confirm
 download_and_install
+echo "Done-zo"
